@@ -8,7 +8,7 @@ import kotlin.test.Test
 
 
 @SpringBootTest
-class AppTest {
+class ConsumerTest {
 
     @Test
     fun contextLoads() {

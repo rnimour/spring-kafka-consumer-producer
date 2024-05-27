@@ -11,9 +11,9 @@ import org.springframework.kafka.core.KafkaAdmin
 open class KafkaTopicConfig {
 
     companion object {
-        @Value(value = "\${spring.kafka.bootstrap-servers}") // not actually working!!! angery!!! 😡❗❗❗
+        @Value(value = "\${spring.kafka.bootstrap-servers}")
         var bootstrapAddress: String = "localhost:9092"
-        const val TOPIC = "my-spring-topic"
+        const val TOPIC = "my-spring-topic" // topic must be a constant because it's used in an annotation
     }
 
     @Bean

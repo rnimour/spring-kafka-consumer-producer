@@ -7,14 +7,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-open class App {
+open class Consumer {
     val greeting: String
         get() {
-            return "Hello World!"
+            return "Hello World! I consume Kafka messages!"
         }
 }
 
 fun main(args: Array<String>) {
-    println(App().greeting)
-    runApplication<App>(*args)
+    println(Consumer().greeting)
+    runApplication<Consumer>(*args)
 }

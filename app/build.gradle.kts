@@ -56,7 +56,7 @@ tasks {
 
 application {
     // Define the main class for the application.
-    mainClass = "com.rnimour.messaging.kafka.AppKt"
+    mainClass = "com.rnimour.messaging.kafka.ConsumerKt"
 }
 
 tasks.named<Test>("test") {
