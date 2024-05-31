@@ -1,6 +1,6 @@
 package com.rnimour.messaging.kafka
 
-import com.rnimour.messaging.kafka.KafkaTopicConfig.Companion.TOPIC
+import com.rnimour.messaging.kafka.KafkaConsumerConfig.Companion.TOPIC
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.KafkaHeaders
 import org.springframework.messaging.handler.annotation.Header

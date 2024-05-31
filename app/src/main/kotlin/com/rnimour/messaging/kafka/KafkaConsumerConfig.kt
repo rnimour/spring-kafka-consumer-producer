@@ -1,7 +1,8 @@
 package com.rnimour.messaging.kafka
 
-import com.rnimour.messaging.kafka.KafkaTopicConfig.Companion.bootstrapAddress
 import jakarta.annotation.PostConstruct
+import org.apache.kafka.clients.admin.AdminClientConfig
+import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
@@ -12,6 +13,7 @@ import org.springframework.kafka.annotation.EnableKafka
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.core.KafkaAdmin
 
 
 @EnableKafka
@@ -19,9 +21,26 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 @Configuration
 open class KafkaConsumerConfig {
 
+    @Value(value = "\${rnimour.group:default-group}")
+    lateinit var groupId: String
+
+    @Value(value = "\${spring.kafka.bootstrap-servers:localhost\\:9092}") // escape the colon (as it's Spring's default value separator)
+    lateinit var bootstrapAddress: String
+
     companion object {
-        @Value(value = "rnimour.group")
-        var groupId: String = "default-group"
+        const val TOPIC = "my-spring-topic" // topic must be a constant because it's used in an annotation
+    }
+
+    @Bean
+    open fun kafkaAdmin(): KafkaAdmin {
+        val configs = HashMap<String, Any>()
+        configs[AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
+        return KafkaAdmin(configs)
+    }
+
+    @Bean
+    open fun mySpringTopic(): NewTopic {
+        return NewTopic(TOPIC, 1, 1)
     }
 
     @Bean
@@ -36,9 +55,9 @@ open class KafkaConsumerConfig {
     }
 
     @Bean
-    open fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, String> {
+    open fun kafkaListenerContainerFactory(consumerFactory: ConsumerFactory<String, String>): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
-        factory.consumerFactory = consumerFactory()
+        factory.consumerFactory = consumerFactory
         return factory
     }
 
