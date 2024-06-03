@@ -12,12 +12,14 @@ plugins {
     // alias(libs.plugins.jvm)
     // we can apparently not use the above alias(libs.plugins.jvm) because in the Docker container it cannot resolve "libs"
     kotlin("jvm") version "1.9.22"
+    id("org.jetbrains.kotlin.plugin.spring") version "2.0.0" // https://kotlinlang.org/docs/all-open-plugin.html
 
     // Apply the application plugin to add support for building a CLI application in Java.
     application
 
     id("io.spring.dependency-management") version "1.1.4"
     id("org.springframework.boot") version "3.2.5"
+
 }
 
 repositories {

@@ -16,7 +16,7 @@ import org.springframework.kafka.core.ProducerFactory
 
 @ConditionalOnProperty("rnimour.produce", havingValue = "true")
 @Configuration
-open class KafkaProducerConfig {
+class KafkaProducerConfig {
 
     companion object {
         const val TOPIC = "my-spring-topic"
@@ -26,17 +26,17 @@ open class KafkaProducerConfig {
     lateinit var bootstrapAddress: String
 
     @Bean
-    open fun kafkaAdmin(): KafkaAdmin = KafkaAdmin(
+    fun kafkaAdmin(): KafkaAdmin = KafkaAdmin(
         mutableMapOf<String, Any>(
             AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
         )
     )
 
     @Bean
-    open fun mySpringTopic(): NewTopic = NewTopic(TOPIC, 1, 1)
+    fun mySpringTopic(): NewTopic = NewTopic(TOPIC, 1, 1)
 
     @Bean
-    open fun producerFactory(kafkaAdmin: KafkaAdmin): ProducerFactory<String, String> =
+    fun producerFactory(kafkaAdmin: KafkaAdmin): ProducerFactory<String, String> =
         DefaultKafkaProducerFactory(
             mutableMapOf<String, Any>(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
@@ -46,7 +46,7 @@ open class KafkaProducerConfig {
         )
 
     @Bean
-    open fun kafkaTemplate(producerFactory: ProducerFactory<String, String>): KafkaTemplate<String, String> {
+    fun kafkaTemplate(producerFactory: ProducerFactory<String, String>): KafkaTemplate<String, String> {
         return KafkaTemplate(producerFactory)
     }
 

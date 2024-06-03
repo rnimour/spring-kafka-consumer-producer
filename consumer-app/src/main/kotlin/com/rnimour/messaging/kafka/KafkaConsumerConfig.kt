@@ -18,7 +18,7 @@ import org.springframework.kafka.core.KafkaAdmin
 @EnableKafka
 @ConditionalOnProperty("rnimour.consume", havingValue = "true", matchIfMissing = true)
 @Configuration
-open class KafkaConsumerConfig {
+class KafkaConsumerConfig {
 
     companion object {
         const val TOPIC = "my-spring-topic" // topic must be a constant because it's used in an annotation
@@ -31,17 +31,17 @@ open class KafkaConsumerConfig {
     lateinit var bootstrapAddress: String
 
     @Bean
-    open fun kafkaAdmin(): KafkaAdmin = KafkaAdmin(
+    fun kafkaAdmin(): KafkaAdmin = KafkaAdmin(
         mutableMapOf<String, Any>(
             AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
         )
     )
 
     @Bean
-    open fun mySpringTopic(): NewTopic = NewTopic(TOPIC, 1, 1)
+    fun mySpringTopic(): NewTopic = NewTopic(TOPIC, 1, 1)
 
     @Bean
-    open fun consumerFactory(): ConsumerFactory<String, String> =
+    fun consumerFactory(): ConsumerFactory<String, String> =
         DefaultKafkaConsumerFactory(
             mutableMapOf<String, Any>(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
@@ -52,7 +52,7 @@ open class KafkaConsumerConfig {
         )
 
     @Bean
-    open fun kafkaListenerContainerFactory(consumerFactory: ConsumerFactory<String, String>): ConcurrentKafkaListenerContainerFactory<String, String> {
+    fun kafkaListenerContainerFactory(consumerFactory: ConsumerFactory<String, String>): ConcurrentKafkaListenerContainerFactory<String, String> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, String>()
         factory.consumerFactory = consumerFactory
         return factory
