@@ -23,6 +23,17 @@ services:
 
   rnimour-kafka-consumer:
     image: rnimour-kafka-consumer
+    depends_on:
+      - kafka
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: consumer-app/Dockerfile
+  rnimour-kafka-producer:
+    image: rnimour-kafka-producer
+    depends_on:
+      - kafka
+    build:
+      context: .
+      dockerfile: producer-app/Dockerfile
+    ports:
+      - 8080:8080

@@ -15,11 +15,14 @@ import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.core.KafkaAdmin
 
-
 @EnableKafka
 @ConditionalOnProperty("rnimour.consume", havingValue = "true", matchIfMissing = true)
 @Configuration
 open class KafkaConsumerConfig {
+
+    companion object {
+        const val TOPIC = "my-spring-topic" // topic must be a constant because it's used in an annotation
+    }
 
     @Value(value = "\${rnimour.group:default-group}")
     lateinit var groupId: String
@@ -27,32 +30,26 @@ open class KafkaConsumerConfig {
     @Value(value = "\${spring.kafka.bootstrap-servers:localhost\\:9092}") // escape the colon (as it's Spring's default value separator)
     lateinit var bootstrapAddress: String
 
-    companion object {
-        const val TOPIC = "my-spring-topic" // topic must be a constant because it's used in an annotation
-    }
+    @Bean
+    open fun kafkaAdmin(): KafkaAdmin = KafkaAdmin(
+        mutableMapOf<String, Any>(
+            AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
+        )
+    )
 
     @Bean
-    open fun kafkaAdmin(): KafkaAdmin {
-        val configs = HashMap<String, Any>()
-        configs[AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
-        return KafkaAdmin(configs)
-    }
+    open fun mySpringTopic(): NewTopic = NewTopic(TOPIC, 1, 1)
 
     @Bean
-    open fun mySpringTopic(): NewTopic {
-        return NewTopic(TOPIC, 1, 1)
-    }
-
-    @Bean
-    open fun consumerFactory(): ConsumerFactory<String, String> {
-        println("creating consumer factory with groupId=$groupId @bootstrapAddress $bootstrapAddress")
-        val configProps: MutableMap<String, Any> = HashMap()
-        configProps[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress
-        configProps[ConsumerConfig.GROUP_ID_CONFIG] = groupId
-        configProps[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-        configProps[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-        return DefaultKafkaConsumerFactory(configProps)
-    }
+    open fun consumerFactory(): ConsumerFactory<String, String> =
+        DefaultKafkaConsumerFactory(
+            mutableMapOf<String, Any>(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapAddress,
+                ConsumerConfig.GROUP_ID_CONFIG to groupId,
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+            )
+        )
 
     @Bean
     open fun kafkaListenerContainerFactory(consumerFactory: ConsumerFactory<String, String>): ConcurrentKafkaListenerContainerFactory<String, String> {
@@ -62,5 +59,6 @@ open class KafkaConsumerConfig {
     }
 
     @PostConstruct
-    fun constructionComplete() = println("This app is a consumer! groupId: $groupId")
+    fun constructionComplete() =
+        println("This app is a consumer! groupId: $groupId, bootstrapAddress: $bootstrapAddress")
 }
