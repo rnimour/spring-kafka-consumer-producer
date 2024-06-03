@@ -23,3 +23,6 @@ services:
 
   rnimour-kafka-consumer:
     image: rnimour-kafka-consumer
+    build:
+      context: .
+      dockerfile: Dockerfile
